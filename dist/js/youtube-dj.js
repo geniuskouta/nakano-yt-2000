@@ -6,7 +6,7 @@ function setLastPlayer(player) {
 }
 
 function toggleLastPlayer() {
-    if(lastPlayer) {
+    if (lastPlayer) {
         togglePlayer(lastPlayer);
     }
 }
@@ -16,6 +16,12 @@ const queueKeySets = [
     'qwertyui',
     'asdfghjk'
 ];
+
+const playerIdToKeys = {
+  'player-a': queueKeySets[0],
+  'player-b': queueKeySets[1],
+  'player-c': queueKeySets[2]
+};
 
 function buildQueuePointsFromDuration(keys, duration) {
     const queuePoints = {};
@@ -36,26 +42,39 @@ function registerOnInputCreatePlayer() {
             const videoId = parseVideoIDFromURL(this.value);
             const playerId = item.getAttribute('player-container-id');
             const existingPlayer = players.get(playerId);
-            if(existingPlayer && videoId) {
-                swapVideo(existingPlayer.player, videoId);
+            if (existingPlayer && videoId) {
+                swapVideo(existingPlayer.player, videoId, playerId)
                 return
             }
 
-            if(videoId) {
+            if (videoId) {
                 createPlayer(videoId, playerId);
             }
         });
     })
 }
 
-function swapVideo(player, newVideoId) {
-  player.loadVideoById(newVideoId);
+function swapVideo(player, newVideoId, playerId) {
+    player.loadVideoById(newVideoId);
+    function checkDuration() {
+        const duration = player.getDuration();
+        // getDuration might return 0 initially
+        if (duration > 0) {
+            const keys = playerIdToKeys[playerId] || '';
+            const queuePoints = buildQueuePointsFromDuration(keys, duration);
+            players.set(playerId, { player, queuePoints });
+        } else {
+            setTimeout(checkDuration, 200); // try again after a bit
+        }
+    };
+
+    checkDuration();
 }
 
 function createSamplerKeys(playerId) {
     const player = players.get(playerId);
     console.log(player)
-    if(!player) {
+    if (!player) {
         return;
     }
 
@@ -84,7 +103,7 @@ function createPlayer(videoId, playerId) {
         events: {
             'onReady': (event) => {
                 const duration = event.target.getDuration();
-                const keys = queueKeySets[players.size]
+                const keys = playerIdToKeys[playerId] || '';
                 const queuePoints = buildQueuePointsFromDuration(keys, duration);
                 players.set(playerId, { player: event.target, queuePoints });
                 setLastPlayer(event.target);
@@ -141,7 +160,7 @@ document.addEventListener('keydown', (event) => {
     console.log(key)
     console.log(players)
 
-    if(key === " ") {
+    if (key === " ") {
         toggleLastPlayer();
         return;
     }
