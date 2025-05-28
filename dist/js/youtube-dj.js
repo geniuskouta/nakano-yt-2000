@@ -29,20 +29,13 @@ function buildQueuePointsFromDuration(keys, duration) {
 }
 
 function registerOnInputCreatePlayer() {
-    const containerIDList = [
-        'player-container-a',
-        'player-container-b',
-        'player-container-c'
-    ]
+    const containerIDList = document.querySelectorAll('[player-container-id]');
 
     containerIDList.forEach(item => {
-        const container = document.getElementById(item);
-        container.querySelector('input[type="text"]').addEventListener('blur', function () {
+        item.querySelector('input[type="text"]').addEventListener('blur', function () {
             const videoId = parseVideoIDFromURL(this.value);
-            
-            const playerId = `player-${item.split('-')[2]}`;
+            const playerId = item.getAttribute('player-container-id');
             const existingPlayer = players.get(playerId);
-
             if(existingPlayer && videoId) {
                 swapVideo(existingPlayer.player, videoId);
                 return
