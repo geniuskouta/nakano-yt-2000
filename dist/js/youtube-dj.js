@@ -12,9 +12,9 @@ function toggleLastPlayer() {
 }
 
 const queueKeySets = [
-    '123456789',
-    'qwertyuio',
-    'asdfghjkl'
+    '12345678',
+    'qwertyui',
+    'asdfghjk'
 ];
 
 function buildQueuePointsFromDuration(keys, duration) {
@@ -52,6 +52,23 @@ function swapVideo(player, newVideoId) {
   player.loadVideoById(newVideoId);
 }
 
+function createSamplerKeys(playerId) {
+    const player = players.get(playerId);
+    console.log(player)
+    if(!player) {
+        return;
+    }
+
+    const samplerKeys = document.querySelector(`[player-sampler-keys-id="${playerId}"]`);
+    const { queuePoints } = player;
+    Object.keys(queuePoints).forEach(key => {
+        const keyElement = document.createElement('a');
+        keyElement.textContent = key;
+        keyElement.classList.add('video-slot-sampler-key'); // optional styling class
+        samplerKeys.appendChild(keyElement);
+    });
+}
+
 function createPlayer(videoId, playerId) {
     const newPlayer = new YT.Player(playerId, {
         height: '180',
@@ -71,6 +88,8 @@ function createPlayer(videoId, playerId) {
                 const queuePoints = buildQueuePointsFromDuration(keys, duration);
                 players.set(playerId, { player: event.target, queuePoints });
                 setLastPlayer(event.target);
+                const samplerKeys = document.querySelector(`[player-sampler-keys-id="${playerId}"]`)
+                createSamplerKeys(playerId);
             }
         }
     });

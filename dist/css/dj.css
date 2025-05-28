@@ -5,6 +5,10 @@
     padding-top: 20px;
 }
 
+.youtube-video-item {
+    width: 320px;
+}
+
 .video-slot-container {
     background-color: #dfe6e9;
     border-radius: 8px;
@@ -34,4 +38,27 @@
 }
 
 .video-slot-url::placeholder {
+}
+
+.video-slot-sampler-keys {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.video-slot-sampler-key {
+    font-family: system-ui;
+    color: #b2bec3;
+    display: inline-flex;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: #dfe6e9;
+    width: 64px;
+    height: 64px;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: rgb(99, 110, 114) 3px 3px 0;
+    cursor: pointer;
 }
