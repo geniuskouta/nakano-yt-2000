@@ -99,7 +99,8 @@ function createSamplerKeys(playerId) {
     Object.keys(queuePoints).forEach(key => {
         const keyElement = document.createElement('a');
         keyElement.textContent = key;
-        keyElement.classList.add('video-slot-sampler-key'); // optional styling class
+        keyElement.classList.add('video-slot-sampler-key');
+        keyElement.setAttribute('player-sample-key-id', key);
         keyElement.addEventListener('pointerdown', function() {
             const seekTime = queuePoints[this.innerText];
             playFromSeekTime(player.player, seekTime);
@@ -189,10 +190,29 @@ document.addEventListener('keydown', (event) => {
         if (queuePoints.hasOwnProperty(key)) {
             const seekTime = queuePoints[key];
             playFromSeekTime(player, seekTime);
+            addActiveStyleOnKeydownSampleKey(key);
             break; // only trigger for one player per key press
         }
     }
 });
+
+
+document.addEventListener('keyup', (event) => {
+    const key = event.key;
+    removeActiveStyleOnKeyupSampleKey(key);
+});
+
+function addActiveStyleOnKeydownSampleKey(sampleKey) {
+    const el = document.querySelector(`[player-sample-key-id="${sampleKey}"]`);
+    if (!el) return;
+    el.classList.add('video-slot-sampler-key-active');
+}
+
+function removeActiveStyleOnKeyupSampleKey(sampleKey) {
+    const el = document.querySelector(`[player-sample-key-id="${sampleKey}"]`);
+    if (!el) return;
+    el.classList.remove('video-slot-sampler-key-active');
+}
 
 function playFromSeekTime(player, seekTime) {
     player.seekTo(seekTime, true);

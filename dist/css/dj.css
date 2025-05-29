@@ -71,7 +71,16 @@ body {
     height: 84px;
     padding: 8px;
     border-radius: 8px;
-    box-shadow: rgb(99, 110, 114) 3px 3px 0;
+    box-shadow: rgb(99, 110, 114) 4px 4px 0;
     cursor: pointer;
     user-select: none;
+    box-shadow: 0 4px 0 rgb(99, 110, 114);
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+
+.video-slot-sampler-key:active,
+.video-slot-sampler-key-active {
+    color: #e1b12c;
+    box-shadow: 0 2px 0 rgb(99, 110, 114);
+    transform: translateY(2px);
 }
