@@ -3,14 +3,23 @@ body {
 }
 
 .youtube-video-list {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding-top: 20px;
+    display: block;
+    text-align: center;
+    padding: 20px 10px;
+    overflow-x: scroll;
+    width: 100%;
+    font-size: 0;
+    white-space: nowrap;
 }
 
 .youtube-video-item {
+    display: inline-block;
     width: 320px;
+    vertical-align: top;
+}
+
+.youtube-video-item:nth-child(n + 2) {
+    margin-left: 8px;
 }
 
 .video-slot-container {
@@ -22,7 +31,6 @@ body {
 
 .video-slot {
     display: block;
-    width: 320px;
     height: 180px;
     border-radius: 8px 8px 0 0;
     background-color: #2d3436;
