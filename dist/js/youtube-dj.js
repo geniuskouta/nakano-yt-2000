@@ -138,23 +138,21 @@ function createPlayButton(player, handler) {
 function parseVideoIDFromURL(youtubeUrl) {
     try {
         const url = new URL(youtubeUrl);
+        let videoID = null;
 
-        // Only allow www.youtube.com
-        if (url.hostname !== "www.youtube.com") return null;
+        if ((url.hostname === "www.youtube.com" || url.hostname === "youtube.com") && url.pathname === "/watch") {
+            videoID = url.searchParams.get("v");
+        } else if (url.hostname === "youtu.be") {
+            videoID = url.pathname.slice(1);
+        }
 
-        // Must be the /watch path
-        if (url.pathname !== "/watch") return null;
-
-        // Get the 'v' parameter
-        const videoID = url.searchParams.get("v");
-
-        // Validate the ID format (11-character YouTube ID)
         const isValidID = /^[a-zA-Z0-9_-]{11}$/.test(videoID);
         return isValidID ? videoID : null;
     } catch {
-        return null; // Not a valid URL
+        return null;
     }
 }
+
 document.addEventListener('keydown', (event) => {
     const key = event.key;
     console.log(key)
