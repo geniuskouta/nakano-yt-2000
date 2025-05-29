@@ -12,9 +12,9 @@ function toggleLastPlayer() {
 }
 
 const queueKeySets = [
-    '12345678',
-    'qwertyui',
-    'asdfghjk'
+    '123456789',
+    'qwertyuio',
+    'asdfghjkl'
 ];
 
 const playerIdToKeys = {
@@ -52,6 +52,22 @@ function registerOnInputCreatePlayer() {
             }
         });
     })
+}
+
+function createDefaultPlayers() {
+    const playerList = document.querySelectorAll('[player-id]');
+    playerList.forEach(item => {
+        const input = item.parentElement.querySelector('input[type="text"]');
+        if(!(input && input.value)) {
+            return
+        }
+
+        const videoId = parseVideoIDFromURL(input.value);
+        console.log(videoId);
+        if (videoId) {
+            createPlayer(videoId, item.getAttribute('player-id'));
+        }
+    });
 }
 
 function swapVideo(player, newVideoId, playerId) {
