@@ -41,13 +41,21 @@ function buildQueuePointsFromDuration(keys, duration) {
 
 function registerOnInputAdjustQueuePoint() {
     const rangeInput = document.querySelector('[queue-point-adjust]');
-    const rangeInputMeter = document.querySelector('[queue-point-adjust-meter]');
     console.log(rangeInput)
+
+    // update the style and value on input
     rangeInput.addEventListener('input', function() {
         if(lastQueueKey && lastPlayer) {
             const startPoint = Number(this.value);
             updateLastQueuePoint(startPoint);
             updateQueuePointStyle(lastPlayer, startPoint);
+        }
+    });
+
+    // make a request on change
+    rangeInput.addEventListener('change', function() {
+        if(lastQueueKey && lastPlayer) {
+            const startPoint = Number(this.value);
             playFromSeekTime(lastPlayer, startPoint);
         }
     });
