@@ -84,6 +84,10 @@ function createSamplerKeys(playerId) {
         const keyElement = document.createElement('a');
         keyElement.textContent = key;
         keyElement.classList.add('video-slot-sampler-key'); // optional styling class
+        keyElement.addEventListener('pointerdown', function() {
+            const seekTime = queuePoints[this.innerText];
+            playFromSeekTime(player.player, seekTime);
+        });
         samplerKeys.appendChild(keyElement);
     });
 }
@@ -168,15 +172,18 @@ document.addEventListener('keydown', (event) => {
     for (const [_, { player, queuePoints }] of players) {
         if (queuePoints.hasOwnProperty(key)) {
             const seekTime = queuePoints[key];
-            player.seekTo(seekTime, true);
-
-            const playerState = player.getPlayerState();
-            if (playerState !== YT.PlayerState.PLAYING) {
-                player.playVideo();
-            }
-            console.log(seekTime);
-            setLastPlayer(player);
+            playFromSeekTime(player, seekTime);
             break; // only trigger for one player per key press
         }
     }
 });
+
+function playFromSeekTime(player, seekTime) {
+    player.seekTo(seekTime, true);
+    const playerState = player.getPlayerState();
+    if (playerState !== YT.PlayerState.PLAYING) {
+        player.playVideo();
+    }
+    console.log(seekTime);
+    setLastPlayer(player);
+}

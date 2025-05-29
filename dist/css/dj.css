@@ -73,4 +73,5 @@ body {
     border-radius: 8px;
     box-shadow: rgb(99, 110, 114) 3px 3px 0;
     cursor: pointer;
+    user-select: none;
 }
