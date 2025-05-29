@@ -89,7 +89,7 @@ body {
 .video-slot-sampler-key:active,
 .video-slot-sampler-key-active {
     color: #e1b12c;
-    box-shadow: 0 2px 0 rgb(99, 110, 114);
+    box-shadow: 0 2px 0 rgba(225, 177, 44, 0.85);
     transform: translateY(2px);
 }
 
