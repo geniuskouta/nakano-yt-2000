@@ -1,0 +1,12 @@
+@media screen and (max-width: 520px) {    
+    .youtube-video-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .youtube-video-item {
+        display: block;
+    }
+}
