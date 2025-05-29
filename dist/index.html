@@ -13,6 +13,12 @@
 </head>
 
 <body>
+    <div class="queue-point-adjust-container">
+        <div class="queue-point-adjust-meter" queue-point-adjust-meter style="width: 0px;">
+            <span class="queue-point-adjust-meter-key" queue-point-adjust-meter-key></span>
+        </div>
+        <input class="queue-point-adjust" type="range" queue-point-adjust step="0.01" />
+    </div>
     <ul class="youtube-video-list" id="youtube-video-list">
         <li class="youtube-video-item">
             <div class="video-slot-container" player-container-id="player-a">
@@ -40,6 +46,7 @@
     <script>
         function onYouTubeIframeAPIReady() {
             createDefaultPlayers();
+            registerOnInputAdjustQueuePoint();
             registerOnInputCreatePlayer();
         }
     </script>

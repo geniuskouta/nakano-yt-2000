@@ -1,5 +1,10 @@
 const players = new Map();
 let lastPlayer = null;
+let lastQueueKey = null;
+
+function setLastQueueKey(queueKey) {
+    lastQueueKey = queueKey;
+}
 
 function setLastPlayer(player) {
     lastPlayer = player;
@@ -32,6 +37,29 @@ function buildQueuePointsFromDuration(keys, duration) {
         queuePoints[key] = seekTime;
     });
     return queuePoints;
+}
+
+function registerOnInputAdjustQueuePoint() {
+    const rangeInput = document.querySelector('[queue-point-adjust]');
+    const rangeInputMeter = document.querySelector('[queue-point-adjust-meter]');
+    console.log(rangeInput)
+    rangeInput.addEventListener('input', function() {
+        if(lastQueueKey && lastPlayer) {
+            const startPoint = Number(this.value);
+            updateLastQueuePoint(startPoint);
+            updateQueuePointStyle(lastPlayer, startPoint);
+            playFromSeekTime(lastPlayer, startPoint);
+        }
+    });
+}
+
+function updateQueuePointStyle(lastPlayer, startPoint) {
+    const duration = lastPlayer.getDuration();
+    const rangeInputMeter = document.querySelector('[queue-point-adjust-meter]');
+    rangeInputMeter.style.width = (startPoint / duration) * 100 + "%";
+    
+    const rangeInputMeterKey = rangeInputMeter.querySelector('[queue-point-adjust-meter-key]');
+    rangeInputMeterKey.textContent = lastQueueKey;
 }
 
 function registerOnInputCreatePlayer() {
@@ -102,8 +130,12 @@ function createSamplerKeys(playerId) {
         keyElement.classList.add('video-slot-sampler-key');
         keyElement.setAttribute('player-sample-key-id', key);
         keyElement.addEventListener('pointerdown', function() {
-            const seekTime = queuePoints[this.innerText];
+            const seekTime = queuePoints[key];
             playFromSeekTime(player.player, seekTime);
+            setLastQueueKey(key);
+            updateQueuePointRangeMax();
+            updateLastQueuePoint(seekTime);
+            updateQueuePointStyle(lastPlayer, seekTime);
         });
         samplerKeys.appendChild(keyElement);
     });
@@ -128,8 +160,9 @@ function createPlayer(videoId, playerId) {
                 const queuePoints = buildQueuePointsFromDuration(keys, duration);
                 players.set(playerId, { player: event.target, queuePoints });
                 setLastPlayer(event.target);
-                const samplerKeys = document.querySelector(`[player-sampler-keys-id="${playerId}"]`)
                 createSamplerKeys(playerId);
+                updateQueuePointRangeMax();
+                updateQueuePointRangeValue(0);
             }
         }
     });
@@ -191,6 +224,11 @@ document.addEventListener('keydown', (event) => {
             const seekTime = queuePoints[key];
             playFromSeekTime(player, seekTime);
             addActiveStyleOnKeydownSampleKey(key);
+            setLastQueueKey(key);
+            updateLastQueuePoint(seekTime);
+            updateQueuePointRangeMax();
+            updateQueuePointRangeValue(seekTime);
+            updateQueuePointStyle(lastPlayer, seekTime);
             break; // only trigger for one player per key press
         }
     }
@@ -222,4 +260,37 @@ function playFromSeekTime(player, seekTime) {
     }
     console.log(seekTime);
     setLastPlayer(player);
+}
+
+function updateLastQueuePoint(newTime) {
+    if (!lastPlayer || !lastQueueKey) return;
+
+    for (const [playerId, data] of players.entries()) {
+        if (data.player === lastPlayer) {
+            if (data.queuePoints.hasOwnProperty(lastQueueKey)) {
+                data.queuePoints[lastQueueKey] = newTime;
+                console.log(`Updated key "${lastQueueKey}" for player "${playerId}" to ${newTime}s`);
+            }
+            break;
+        }
+    }
+}
+
+function updateQueuePointRangeMax() {
+    if (!lastPlayer) return;
+
+    const duration = lastPlayer.getDuration();
+    const rangeInput = document.querySelector('[queue-point-adjust]');
+    if (rangeInput && duration > 0) {
+        rangeInput.max = duration;
+    }
+}
+
+function updateQueuePointRangeValue(newValue) {
+    if (!lastPlayer) return;
+
+    const rangeInput = document.querySelector('[queue-point-adjust]');
+    if (rangeInput) {
+        rangeInput.value = newValue;
+    }
 }
